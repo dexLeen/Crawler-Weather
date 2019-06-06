@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.css'/>
+    <link rel='stylesheet' href='/stylesheets/bootstrap-theme.css'/>
+</head>
+<body>
+
+<h3>【nodejs爬虫】 获取天气网信息</h3>
+
+<p>
+    <button class="btn" id="btn0" onclick="getWeather()">点击开始抓取</button>
+</p>
+
+<form role="form">
+	<div class="form-group">
+		<select name="city" id="city" class="form-control">
+			<option value="">默认选择</option>
+			<option value="">北京</option>
+            <option value="">上海</option>
+            <option value="">天津</option>
+		</select>
+	</div>
+</form>
+
+<div class="container"></div>
+
+<div class="footer">
+
+</div>
+
+<script type="text/javascript" src="javascripts/jquery.min.js"></script>
+<script type="application/javascript">
+
+    function getWeather() {
+        $(document).ajaxSend(function (event, xhr, settings) {  //抓取中...
+            $(".fetching").css("display", "block");
+        });
+        $(document).ajaxSuccess(function (event, xhr, settings) {  //抓取成功
+            $(".fetching").css("display", "none");
+        });
+
+        $.ajax({
+            data: {city: 'luoyang'},
+            dataType: "json",
+            type: "get",
+            url: '/getWeather',
+            success: function (data) {
+                var html = '';
+                $(".container").empty();
+                if (Object.keys(data).length) {
+                    for (var i = 0; i < data.length; i++) {
+                        html += "<div class='jobs'>" +
+                            "<p>日期：" + data[i].time + "</p>" +
+                            "<p><span >天气：</span>  " + data[i].type + "</p>" +
+                            "<p><span>气温：</span>  " + data[i].temperature + "</p>" +
+                            "<p><span>风力：</span>  " + data[i].wind + "</p>" +
+                            "</div>"
+                    }
+                }
+                $(".container").append(html);  //展现至页面
+            },
+            error: function (error) {
+                console.log(error);
+                alert("Can't find data");
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>
