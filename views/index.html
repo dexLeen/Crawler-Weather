@@ -12,7 +12,7 @@
 <form class="form-horizontal">
 	<div class="form-group">
         <label class="col-sm-2 control-label">省份:</label>
-        <div class="col-sm-10">
+        <div class="col-sm-8">
           <select name="province" id="province" class="form-control">
             <option value="">请选择</option>
             <%province.forEach(function(item){%>
@@ -23,8 +23,9 @@
     </div>
     <div class="form-group">
         <label class="col-sm-2 control-label">区域:</label>
-        <div class="col-sm-10">
+        <div class="col-sm-8">
           <select name="city" id="city" class="form-control">
+               <option value="">请选择</option>
               <%city.forEach(function(item){%>
                   <option value=<%=item.url%> data=<%=item.Id%>><%=item.city%></option>
               <%})%>
@@ -32,8 +33,8 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label">时间:</label>
-        <div class="col-sm-10">
+        <label class="col-sm-2 control-label">天数:</label>
+        <div class="col-sm-8">
            <select name="type" id="type" class="form-control">
               <option value="3" >3</option>
               <option value="10" >10</option>
@@ -69,13 +70,32 @@
 <script type="text/javascript" src="javascripts/jquery.min.js"></script>
 <script type="application/javascript">
 
-$("#province").change(function() {
-    let provinceId = $(this).val();
-    if(provinceId){
-        $("#city option").css('display','none');
-        $("#city option[data="+provinceId+"]").css('display','block');
-    }
+$(document).ready(function(){
+    let cityList = [];
+    $("#city option").each(function() {
+      let object= {
+          url: $(this).val(),
+          city: $(this).text(),
+          id: $(this).attr('data'),
+      };
+      cityList.push(object);
+    });
+    cityList = spiltJsonArrayByParams('id',cityList);
+
+    $("#province").change(function() {
+        let provinceId = parseInt($(this).val());
+        if(provinceId){
+            $("#city option").remove();
+            let cityData = cityList[provinceId+1].data;
+            let html= "<option value='/' >请选择</option>";
+            for(let i in cityData){
+               html += '<option value=' + cityData[i].url + ' data=' + cityData[i].id + '>' + cityData[i].city + '</option>';
+            }
+            $("#city").append(html);
+        }
+    });
 });
+
 
 function getWeather() {
     let params = {
@@ -92,15 +112,13 @@ function getWeather() {
             $(".content").empty();
             if (Object.keys(data).length) {
                 for (var i = 0; i < data.length; i++) {
-
                     html += "<tr><td>"+data[i].time+"</td>"
                         +"<td>"+data[i].type+"</td>"
                         +"<td>"+data[i].temperature+"</td>"
                         +"<td>"+data[i].wind+"</td></tr>";
                 }
             }
-            console.log(html);
-            $(".content").append(html);  //展现至页面
+            $(".content").append(html);
         },
         error: function (error) {
             console.log(error);
@@ -108,6 +126,31 @@ function getWeather() {
         }
     });
     return false;
+}
+
+function spiltJsonArrayByParams(params='id',list){
+    var object = {};
+    var array = [];
+    for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        if (!object[item[params]]) {
+            array.push({
+                id: item.id,
+                url: item.url,
+                data: [item]
+            });
+            object[item.id] = item;
+        } else {
+            for (var j = 0; j < array.length; j++) {
+                var value = array[j];
+                if (value[params] === item[params]) {
+                    value.data.push(item);
+                    break;
+                }
+            }
+        }
+    }
+    return array;
 }
 
 </script>
