@@ -4,18 +4,14 @@ const http = require('../lib/httpRequest');
 const cheerio = require('cheerio');
 
 
-/**
- * '<a href="/haidian/">海淀</a><a href="/chaoyang/">朝阳</a><a href="/shunyi/">顺义</a><a href="/huairou/">怀柔</a><a href="/tongzhou/">通州</a><a href="/changping/">昌平</a><a href="/yanqing/">延庆</a><a href="/fengtai/">丰台</a><a href="/shijingshan/">石景山</a><h3><a href="/daxing/">大兴</a></h3><a href="/fangshan/">房山</a><a href="/miyun/">密云</a><a href="/mentougou/">门头沟</a><a href="/pinggu/">平谷</a><a href="/dongchengqu/">东城</a><a href="/xichengqu/">西城</a>'.replace(/<\/?h3>/g, '').split('</a>').forEach(v => {
- *   var a = v.match(/href=\"(.+?)\".+?>(.+)$/g);
- *   console.log(a, v)
- *   })
- */
+let baseUrl = "http://www.tianqi.com";
+
 /* GET home page. */
 router.get('/', function (req, res) {
-    let url = 'http://www.tianqi.com/chinacity.html';
+    let url = `${baseUrl}/chinacity.html`;
     let provinceList = [];
     let cityList = [];
-    http.processRequest('GET', url).then((data) => {
+    return http.processRequest('GET', url).then((data) => {
         let $ = cheerio.load(data, {decodeEntities: false});
         $(".wrapbox .citybox>h2").each(function (key, val) {
             let content = $(this).html();
@@ -30,32 +26,28 @@ router.get('/', function (req, res) {
         });
 
         $(".wrapbox .citybox>span").each(function (key, val) {
-            let content = $(this).html();
-            let object = {
-                Id: key,
-                city: '',
-                url: '',
-            };
+            var content = $(this).html();
             if (content.indexOf('h3') > -1) {
-
-            } else {
-
+                // 过滤h3
+                content = content.replace(/<\/?h3>/g, '');
+            }
+            content = content.split('</a>');
+            for (let i = 0; i < content.length - 1; i++) {
+                var object = {Id: key};
+                object.city = />(.*)/.exec(content[i])[1];
+                object.url = /href=\"(.+?)\">/.exec(content[i])[1];
+                cityList.push(object);
             }
         });
-
-        console.log(provinceList);
-
+        res.render('index', {title: 'Nodejs爬虫', province: provinceList, city: cityList});
     });
-    res.render('index', {title: 'Nodejs爬虫'});
 });
 
 
 router.get('/getWeather', function (req, res, next) {
-    let data = [7, 10, 15, 30];
-    let city = req.param('city') || 'luoyang';
-    let time = data.includes(req.param('time')) ? req.param('time') : 30;
-    let url = `https://www.tianqi.com/${city}/${time}`;
-
+    let city = req.query.city || 'luoyang';
+    let type = req.query.type || 30;
+    let url = `${baseUrl}${city}${type}`;
     let weathers = [];
 
     return http.processRequest('GET', url).then((data) => {

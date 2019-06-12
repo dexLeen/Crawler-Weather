@@ -29,7 +29,7 @@ app.use(favicon());
 app.use(logger('dev'));
 // 数据解析
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({extended: true}));
 // cookie
 app.use(cookieParser());
 // 静态文件目录
