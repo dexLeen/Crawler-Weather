@@ -18,7 +18,7 @@ router.get('/', function (req, res) {
             let province = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '');
             let url = /<a.+?href=\"(.+?)\".*>/.exec(content)[1];
             let object = {
-                Id: key,
+                Id: key + 1,
                 'province': province,
                 url: url
             };
@@ -33,7 +33,7 @@ router.get('/', function (req, res) {
             }
             content = content.split('</a>');
             for (let i = 0; i < content.length - 1; i++) {
-                var object = {Id: key};
+                var object = {Id: key + 1};
                 object.city = />(.*)/.exec(content[i])[1];
                 object.url = /href=\"(.+?)\">/.exec(content[i])[1];
                 cityList.push(object);

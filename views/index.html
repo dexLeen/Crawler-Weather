@@ -86,7 +86,7 @@ $(document).ready(function(){
         let provinceId = parseInt($(this).val());
         if(provinceId){
             $("#city option").remove();
-            let cityData = cityList[provinceId+1].data;
+            let cityData = cityList[provinceId].data;
             let html= "<option value='/' >请选择</option>";
             for(let i in cityData){
                html += '<option value=' + cityData[i].url + ' data=' + cityData[i].id + '>' + cityData[i].city + '</option>';
