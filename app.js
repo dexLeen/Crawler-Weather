@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 
 // 路由控制
 const routes = require('./routes/index');
-const users = require('./routes/users');
+const weather = require('./routes/weather');
 
 // 项目实例
 const app = express();
@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 匹配路由
 app.use('/', routes);
-app.use('/user', users);
+app.use('/weather', weather);
 
 
 /// 404错误处理
