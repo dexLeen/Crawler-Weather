@@ -10,7 +10,7 @@ const http = require('http');
 /**
  * 定义启动端口
  */
-const port = normalizePort(process.env.PORT || '1555');
+const port = normalizePort(process.env.PORT || '8888');
 app.set('port', port);
 
 /**
