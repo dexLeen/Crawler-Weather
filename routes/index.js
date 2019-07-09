@@ -6,8 +6,7 @@ const cheerio = require('cheerio');
 
 let baseUrl = "http://www.tianqi.com";
 
-/* GET home page. */
-router.get('/', function (req, res) {
+function getCity() {
     let url = `${baseUrl}/chinacity.html`;
     let provinceList = [];
     let cityList = [];
@@ -39,8 +38,22 @@ router.get('/', function (req, res) {
                 cityList.push(object);
             }
         });
-        res.render('index', {title: 'Nodejs爬虫', province: provinceList, city: cityList});
+        return {
+            'province': provinceList,
+            'city': cityList,
+        };
     });
+}
+
+/* GET home page. */
+router.get('/', async function (req, res) {
+    let data = await getCity();
+    res.render('index', {title: 'Nodejs爬虫', province: data.province, city: data.city});
+});
+
+router.get('/city', async function (req, res) {
+    let data = await getCity();
+    res.json(data);
 });
 
 
