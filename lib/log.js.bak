@@ -1,0 +1,130 @@
+const fs = require('fs');
+const time = require('china-time');
+
+const path = './logs';
+const fileName = `${path}/${time('YYYY-MM-DD')}.log`;
+
+module.exports = {
+    recordInfomation: (token, type) => {
+        token = token.replace(/Bearer\s/g, '');
+        type = type.toLocaleUpperCase();
+        let content = '\n [' + type + '] ' + time('YYYY-MM-DD HH:mm:ss') + '\n';
+        content += '' + token;
+        if (syncExists(fileName)) {
+            syncAppendFile(fileName, content);
+        } else {
+            if (syncExists(path)) {
+                if (syncExists(fileName)) {
+                    syncAppendFile(fileName, content);
+                } else {
+                    syncWriteFile(fileName, content);
+                }
+            } else {
+                syncCreateFolder(path);
+                syncWriteFile(fileName, content);
+            }
+        }
+        return true;
+    },
+};
+
+/**
+ * @description await function to create a folder
+ * @param {*} path folder name
+ */
+function awaitCreateFolder(path) {
+    fs.mkdir(path, {recursive: true}, (err) => {
+        if (err) {
+            console.log(err);
+            return false;
+        }
+        return true;
+    });
+}
+
+/**
+ * @description await function to write or create a file
+ * @param {*} fileName
+ * @param {*} content
+ */
+function awaitWriteFile(fileName, content) {
+    fs.writeFile(fileName, content, (err) => {
+        if (err) {
+            console.log(err);
+            return false;
+        }
+        return true;
+    });
+}
+
+/**
+ * @description await function to append file
+ * @param {*} fileName
+ * @param {*} content
+ */
+function awaitAppendFile(fileName, content) {
+    fs.appendFile(fileName, content, (err) => {
+        if (err) {
+            console.log(err);
+            return false;
+        }
+        return true;
+    });
+}
+
+/**
+ * @description sync function to check file exists
+ * @param {*} fileOrPath
+ */
+function syncExists(fileOrPath) {
+    if (fs.existsSync(fileOrPath)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * @description sync function to create a folder
+ */
+function syncCreateFolder(path) {
+    try {
+        fs.mkdirSync(path);
+        return true;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
+
+/**
+ * @description sync function to write or create a file
+ * @param {*} fileName
+ * @param {*} content
+ */
+function syncWriteFile(fileName, content) {
+    try {
+        fs.writeFileSync(fileName, content);
+        return true;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
+/**
+ * @description sync function to append file
+ * @param {*} fileName
+ * @param {*} content
+ */
+function syncAppendFile(fileName, content) {
+    try {
+        fs.appendFileSync(fileName, content);
+        return true;
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
+
+

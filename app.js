@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 // 路由控制
 const routes = require('./routes/index');
 const weather = require('./routes/weather');
+const proxy = require('./routes/proxy');
 
 // 项目实例
 const app = express();
@@ -38,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 匹配路由
 app.use('/', routes);
 app.use('/weather', weather);
+app.use('/proxy', proxy);
 
 
 /// 404错误处理

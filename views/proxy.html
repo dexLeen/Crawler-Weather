@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
+    <link rel='stylesheet' href='/stylesheets/bootstrap-select.css' />
+    <link rel='stylesheet' href='/stylesheets/bootstrap-theme.css' />
+</head>
+
+<body>
+
+    <h3 style="margin-left: 20px;">Ip Pool</h3>
+
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">来源网站:</label>
+            <div class="col-sm-8">
+                <select name="type" id="type"  data-live-search="true" title="请选择 ...">
+                    <option value="89ip">89 代理</option>
+                    <option value="kuaidaili">K 代理</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-default" onclick="getIps()">点击开始抓取</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="container">
+        <table class="table table-striped">
+            <caption>数据输出:</caption>
+            <thead>
+                <tr>
+                    <th>IP</th>
+                    <th>PORT</th>
+                    <th>地理位置</th>
+                    <th>运营商</th>
+                    <th>验证时间</th>
+                </tr>
+            </thead>
+            <tbody class="content">
+
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript" src="javascripts/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/bootstrap.js"></script>
+    <script type="text/javascript" src="javascripts/bootstrap-select.js"></script>
+    <script type="application/javascript">
+
+
+
+
+        function getIps() {
+            let params = {
+                type: $("#type").val(),
+            };
+            $.ajax({
+                data: params,
+                dataType: "json",
+                type: "get",
+                url: '/proxy/ips',
+                success: function (data) {
+                    var html = '';
+                    $(".content").empty();
+                    if (Object.keys(data).length) {
+                        // for (var i = 0; i < data.length; i++) {
+                        //     var redCss = blueCss = '';
+                        //     if (data[i].max > 34) {
+                        //         redCss = 'color:red';
+                        //     }
+                        //     if (data[i].min < 1) {
+                        //         blueCss = 'color:lightblue';
+                        //     }
+                        //     html += "<tr><td>" + data[i].time + "</td>"
+                        //         + "<td>" + data[i].type + "</td>"
+                        //         + "<td ><span style='" + blueCss + "'>" + data[i].min + "</span>~<span style='" + redCss + "'>" + data[i].max + "</span>℃</td>"
+                        //         + "<td>" + data[i].wind + "</td></tr>";
+                        // }
+                    }
+                    $(".content").append(html);
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert("Can't find data");
+                }
+            });
+            return false;
+        }
+
+    </script>
+
+</body>
+
+</html>
