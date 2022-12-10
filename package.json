@@ -12,7 +12,7 @@
     "debug": "~0.7.4",
     "depd": "^2.0.0",
     "ejs": "^0.8.8",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "html-entities": "^1.2.1",
     "http": "0.0.0",
     "iconv-lite": "^0.4.24",
